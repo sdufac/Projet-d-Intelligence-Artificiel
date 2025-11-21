@@ -1,5 +1,6 @@
 from typing import List, Optional
 from logic import GameState, Move
+import random
 
 # This file as well as utils.py should be the only ones you have to edit!
 
@@ -18,13 +19,20 @@ class Strategy:
         :return: (Optional[Move]) The selected move, or None to forfeit.
         """
         raise NotImplementedError
+    
 
 
 class RandomStrategy(Strategy):
     """
     Pick a random legal move.
     """
-    # TODO: implement this class
+    def select_move(self, state : GameState, player : int , legal_moves : list[Move]):
+        if legal_moves:
+            return random.choice(legal_moves)
+        else:
+            return None
+
+
 
 
 class GreedyMaxDegreeStrategy(Strategy):
@@ -33,7 +41,6 @@ class GreedyMaxDegreeStrategy(Strategy):
 
     Simple and explainable baseline.
     """
-    # TODO: implement this class
 
 
 # TODO: You should implement your own strategies here (Minimax, MCTS, etc.)
