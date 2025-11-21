@@ -1,0 +1,32 @@
+# Environnements Virtuels (Venv)
+# -----------------------------
+# Ignorer le dossier standard créé par 'python -m venv venv' ou l'utilisation de virtualenv.
+venv/
+.venv/
+
+# Le dossier d'environnement virtuel créé par Poetry (si vous l'utilisez)
+.venv/
+
+# Dossier d'environnement Conda (si vous l'utilisez)
+.conda/
+
+# Fichiers de configuration spécifiques à l'utilisateur
+# ----------------------------------------------------
+*.pyc
+__pycache__/
+*.pyd
+*.so
+*.egg
+
+# Fichiers de construction et de distribution
+# ----------------------------------------
+dist/
+build/
+*.egg-info/
+.tox/
+
+# Éditeurs et IDEs courants
+# --------------------------
+.idea/      # PyCharm, IntelliJ
+.vscode/    # VS Code
+*.swp       # Vim swap files
