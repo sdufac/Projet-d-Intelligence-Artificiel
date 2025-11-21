@@ -1,0 +1,32 @@
+1 - Une partie peut-elle se terminer par un match nul? Pourquoi ?
+	Non il y a forcement un gagnant. Il y a forcement un joueur qui ne peut plus jouer avant l'autre.
+	Ce joueur est dont tout ses sommets visitables sont soit déjà exploité ou on plus de deux voisin éxlploité.
+
+2 - Caractériser le jeu en termes de son information disponible
+	Les informations qui sont disponible sont:
+		- La taille du graphe
+		- Nombrede coup théorique maximum
+		- Nombre de joueur
+		- Cout de déplacement
+		- Sommet occupé par un joueur ou l'autre
+		- Position de départ
+		- Nombre de voisin occupé par chaque sommet
+
+	Caractère aléatoire :
+		- La taille du graphe 
+		- Position de départ
+		- Coup du joueur adverse
+		- Degrees de chaque sommet du graphe
+
+3 - Nombre de position possible pour le jeux
+	A partir du sommet de départ le nombre max de possibilité est
+		T1	degres(sommet J1) * degres(sommet J2)
+		T2	(degres(sommet J1) * degres(sommet J2)) * degres(sommet J1)
+		T3	((degres(sommet J1) * degres(sommet J2)) * degres(sommet J1)) * degres(sommet J2)
+
+	ce qui donne 𝕆(2^degres_total * n)
+
+4 - Le facteur de branchement moyen correspond a la moyenne des degres du graphe
+
+5 - Que plus il a de sommet et des degres dans le graphe plus la complexité est élevé
+
