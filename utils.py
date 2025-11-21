@@ -143,3 +143,10 @@ def num_edges(G: dict) -> int:
                 counted.add((u, v))
                 count += 1
     return count
+
+def num_degree(G: dict, sommet:int) -> int:
+    count = 0
+    for voisin in G[sommet]:
+        count +=1
+
+    return count

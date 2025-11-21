@@ -41,6 +41,16 @@ class GreedyMaxDegreeStrategy(Strategy):
 
     Simple and explainable baseline.
     """
+    def select_move(self, state : GameState, player : int , legal_moves : list[Move]):
+        bestMove: Move = None
+        bestMoveD: int = -Inf
+        for move in legal_moves:
+            currentD = num_degree(G,move.to_node)
+            if  currentD > bestMoveD:
+                bestMove = move
+                bestMoveD =  currentD
+
+        return bestMove
 
 
 # TODO: You should implement your own strategies here (Minimax, MCTS, etc.)
@@ -50,4 +60,5 @@ class GreedyMaxDegreeStrategy(Strategy):
 STRATEGIES = {
     "random": RandomStrategy,
     "greedy": GreedyMaxDegreeStrategy,
+    
 }
