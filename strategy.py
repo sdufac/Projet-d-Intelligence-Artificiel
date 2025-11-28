@@ -36,7 +36,7 @@ class RandomStrategy(Strategy):
 
 
 
-class GreedyMaxDegreeStrategy(Strategy):
+class GreedyMinDegreeStrategy(Strategy):
     """
     Pick the move that gives your endpoint the highest number of free neighbors after the move.
 
@@ -47,12 +47,11 @@ class GreedyMaxDegreeStrategy(Strategy):
         bestMoveD: int = -1
         for move in legal_moves:
             currentD = num_degree(state.G,move.to_node)
-            if  currentD > bestMoveD:
+            if  currentD < bestMoveD:
                 bestMove = move
                 bestMoveD =  currentD
 
         return bestMove
-
 
 # TODO: You should implement your own strategies here (Minimax, MCTS, etc.)
 
