@@ -1,4 +1,5 @@
 from typing import Dict, Set, List
+from logic import GameState
 import random
 
 # This file as well as strategy.py should be the only ones you have to edit!
@@ -150,3 +151,13 @@ def num_degree(G: dict, sommet:int) -> int:
         count +=1
 
     return count
+
+def freeNeighbor(G: dict, sommet:int, state:GameState) -> int:
+    count = 0
+    for voisin in G[sommet]:
+        if voisin not in state.occupied:
+            count +=1
+
+    return count
+    
+

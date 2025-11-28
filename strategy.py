@@ -1,6 +1,6 @@
 from typing import List, Optional
 from logic import GameState, Move
-from utils import num_degree
+from utils import num_degree,freeNeighbor
 import random
 
 # This file as well as utils.py should be the only ones you have to edit!
@@ -36,7 +36,7 @@ class RandomStrategy(Strategy):
 
 
 
-class GreedyMinDegreeStrategy(Strategy):
+class GreedyMaxDegreeStrategy(Strategy):
     """
     Pick the move that gives your endpoint the highest number of free neighbors after the move.
 
@@ -46,14 +46,15 @@ class GreedyMinDegreeStrategy(Strategy):
         bestMove: Move = None
         bestMoveD: int = -1
         for move in legal_moves:
-            currentD = num_degree(state.G,move.to_node)
-            if  currentD < bestMoveD:
+            currentD = freeNeighbor(state.G,move.to_node,state)
+            if  currentD > bestMoveD:
                 bestMove = move
                 bestMoveD =  currentD
 
         return bestMove
 
 # TODO: You should implement your own strategies here (Minimax, MCTS, etc.)
+    
 
 # Registry of available strategies.
 # Add your new strategies here to run them from main.py.
