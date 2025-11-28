@@ -1,5 +1,6 @@
 from typing import List, Optional
 from logic import GameState, Move
+from utils import num_degree
 import random
 
 # This file as well as utils.py should be the only ones you have to edit!
@@ -43,9 +44,9 @@ class GreedyMaxDegreeStrategy(Strategy):
     """
     def select_move(self, state : GameState, player : int , legal_moves : list[Move]):
         bestMove: Move = None
-        bestMoveD: int = -Inf
+        bestMoveD: int = -1
         for move in legal_moves:
-            currentD = num_degree(G,move.to_node)
+            currentD = num_degree(state.G,move.to_node)
             if  currentD > bestMoveD:
                 bestMove = move
                 bestMoveD =  currentD

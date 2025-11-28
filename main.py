@@ -45,6 +45,11 @@ def run():
 
     game = Game(G, a, b)
     winner = game.play_game(s0, s1, verbose=args.verbose)
+
+    fname = "output.txt"
+    with open(fname, 'a') as f:
+        f.write(f"Winner :{winner}\n")
+
     print("Winner:", winner)
 
 if __name__ == '__main__':
