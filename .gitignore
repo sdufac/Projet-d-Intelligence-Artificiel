@@ -30,3 +30,7 @@ build/
 .idea/      # PyCharm, IntelliJ
 .vscode/    # VS Code
 *.swp       # Vim swap files
+
+
+# Fichiers de sortie à ignorer
+output.txt
