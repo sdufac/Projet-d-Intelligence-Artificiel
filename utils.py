@@ -1,6 +1,23 @@
 from typing import Dict, Set, List
 from logic import GameState
 import random
+import math
+from collections import deque
+from logic import is_move_legal, apply_move, Move
+from dataclasses import dataclass, field
+from typing import Optional, List
+
+
+@dataclass
+class Node:
+    id: int
+    parent: Optional[int]             # id du parent, None pour la racine
+    move: Optional[Move] = None       # move appliqué pour arriver ici
+    state: GameState | None = None    # possiblement None si on choisit d'économiser la mémoire
+    player: int = 0
+    children: List[int] = field(default_factory=list)
+    value: float = math.inf
+
 
 # This file as well as strategy.py should be the only ones you have to edit!
 
@@ -145,7 +162,11 @@ def num_edges(G: dict) -> int:
                 count += 1
     return count
 
+
 def num_degree(G: dict, sommet:int) -> int:
+    """
+    Fonction créer par nous même qui compte le nombre de voisins d'un sommet
+    """
     count = 0
     for voisin in G[sommet]:
         count +=1
@@ -153,11 +174,57 @@ def num_degree(G: dict, sommet:int) -> int:
     return count
 
 def freeNeighbor(G: dict, sommet:int, state:GameState) -> int:
+    """
+    Fonction créer par nous même qui compte le nombre de voisins libres d'un sommet
+    """
     count = 0
     for voisin in G[sommet]:
         if voisin not in state.occupied:
             count +=1
 
     return count
+
+# def ConstructTree(G : dict, state:GameState):
+#     """
+#     Fonction créer par nous même qui construit un arbre
+#     """
+#     graph: Dict[int, Node] = {}
     
+#     file = deque()
+#     file.append(Node(id=0, parent=None, state=state.copy(), player=0))
+#     id = 0
+
+#     while file:
+
+#         currentNode = file.popleft()
+
+#         graph[currentNode.id] = currentNode
+#         moves = legal_movesv2(currentNode.player, currentNode.state, G)  # on considère que c'est toujours le joueur 0 qui joue
+#         for move in moves:
+#             id +=1
+#             newState = currentNode.state.copy()
+#             apply_move(newState, currentNode.player, move)
+#             newNode = Node(id, parent=currentNode.id, move=move, state=newState, player=1-currentNode.player)
+#             currentNode.children.append(newNode.id)
+#             file.append(newNode)
+#     return graph
+
+
+
+def legal_movesv2(player: int, state:GameState, G : dict) -> List[Move]:
+        """
+        
+        """
+        return [m for m in candidate_movesV2(player,state,G) if is_move_legal(state, player, m)]
+
+
+def candidate_movesV2(player: int, state:GameState,G : dict) -> List[Move]:
+        """
+        
+        """
+        endpoint = state.endpoints[player]
+        if endpoint is None:
+            return []
+        return [Move(from_node=endpoint, to_node=v) for v in G[endpoint] if v not in state.occupied]
+
 

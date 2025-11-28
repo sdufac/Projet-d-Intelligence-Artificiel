@@ -2,6 +2,7 @@ from typing import List, Optional
 from logic import GameState, Move
 from utils import num_degree,freeNeighbor
 import random
+from game import Game
 
 # This file as well as utils.py should be the only ones you have to edit!
 
@@ -54,6 +55,19 @@ class GreedyMaxDegreeStrategy(Strategy):
         return bestMove
 
 # TODO: You should implement your own strategies here (Minimax, MCTS, etc.)
+
+class MinMaxStrategy(Strategy):
+    """
+    Implémentation basique de la stratégie MinMax
+    """
+    # def min_max_search(self, state: GameState,player : int)
+        
+    def max_value(self, game : Game):
+        if game.is_over():
+            return freeNeighbor
+
+    def select_move(self, state : GameState, player : int , legal_moves : list[Move]):
+
     
 
 # Registry of available strategies.
@@ -61,5 +75,5 @@ class GreedyMaxDegreeStrategy(Strategy):
 STRATEGIES = {
     "random": RandomStrategy,
     "greedy": GreedyMaxDegreeStrategy,
-    
+    "minmax": MinMaxStrategy
 }
