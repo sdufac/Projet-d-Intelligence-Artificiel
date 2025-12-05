@@ -63,33 +63,31 @@ class GreedyMaxDegreeStrategy(Strategy):
 # TODO: You should implement your own strategies here (Minimax, MCTS, etc.)
 
 class MinMaxStrategy(Strategy):
+
     # def min_max_search(self, state: GameState,player : int)
     def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
-        profondeurMax = 4
+        depth = 4
 
         move = None
-        (value,move) = self.maxValue(state,player,profondeurMax, 0)
+        (value,move) = self.maxValue(state,player, depth)
         return move
 
-    def maxValue(self,state :GameState,player :int,profondeurMax:int, profondeur: int) -> tuple[int,Move | None]:
+    def maxValue(self,state :GameState,player :int, depth: int) -> tuple[int,Move | None]:
         legal_move = get_legal_moves(state,state.G,player)
         if not legal_move: 
             return (-10000,None)
-        elif profondeur > profondeurMax:
+        elif depth < 0:
             sommetPlayer = state.endpoints[player]
             assert sommetPlayer is not None
             return (freeNeighbor(state.G,sommetPlayer,state),None)
 
-        
-        profondeur +=1
-        
         v = -999999
         move = None
         actions = get_legal_moves(state,state.G,player)
         for a in actions:
             nextState = copy.deepcopy(state)
             apply_move(nextState,player,a)
-            v2,a2 = self.minValue(nextState,1-player,profondeurMax,profondeur)
+            v2,a2 = self.minValue(nextState,1-player,depth - 1)
             if v2 > v:
                 v = v2
                 move = a
@@ -97,14 +95,15 @@ class MinMaxStrategy(Strategy):
 
 
 
-    def minValue(self,state:GameState,player :int,profondeurMax:int, profondeur:int)-> tuple[int,Move | None]:
+    def minValue(self,state:GameState,player :int, depth:int)-> tuple[int,Move | None]:
         legal_move = get_legal_moves(state,state.G,player)
         if not legal_move: 
             return (10000,None)
-        elif profondeur > profondeurMax:
-            sommetPlayer = state.endpoints[player]
+        elif depth < 0:
+            sommetPlayer = state.endpoints[1 - player]
             assert sommetPlayer is not None
             return (freeNeighbor(state.G,sommetPlayer,state),None)
+
         
         v = 999999
         move = None
@@ -112,7 +111,7 @@ class MinMaxStrategy(Strategy):
         for a in actions:
             nextState = copy.deepcopy(state)
             apply_move(nextState,player,a)
-            v2,a2 = self.maxValue(nextState,1-player,profondeurMax,profondeur)
+            v2,a2 = self.maxValue(nextState,1-player,depth - 1)
             if v2 < v:
                 v = v2
                 move = a
