@@ -215,28 +215,3 @@ def freeNeighbor(G: (Dict[int, Set[int]]),player, state:GameState) -> int:
         return p1count - p0count
 
     return None
-
-# def ConstructTree(G : dict, state:GameState):
-#     """
-#     Fonction créer par nous même qui construit un arbre
-#     """
-#     graph: Dict[int, Node] = {}
-    
-#     file = deque()
-#     file.append(Node(id=0, parent=None, state=state.copy(), player=0))
-#     id = 0
-
-#     while file:
-
-#         currentNode = file.popleft()
-
-#         graph[currentNode.id] = currentNode
-#         moves = legal_movesv2(currentNode.player, currentNode.state, G)  # on considère que c'est toujours le joueur 0 qui joue
-#         for move in moves:
-#             id +=1
-#             newState = currentNode.state.copy()
-#             apply_move(newState, currentNode.player, move)
-#             newNode = Node(id, parent=currentNode.id, move=move, state=newState, player=1-currentNode.player)
-#             currentNode.children.append(newNode.id)
-#             file.append(newNode)
-#     return graph
