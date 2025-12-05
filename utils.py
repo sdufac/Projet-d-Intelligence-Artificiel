@@ -173,7 +173,7 @@ def num_degree(G: dict, sommet:int) -> int:
 
     return count
 
-def freeNeighbor(G: dict, sommet:int, state:GameState) -> int:
+def freeNeighbor(G: dict[int,list[int]], sommet:int, state:GameState) -> int:
     """
     Fonction créer par nous même qui compte le nombre de voisins libres d'un sommet
     """
