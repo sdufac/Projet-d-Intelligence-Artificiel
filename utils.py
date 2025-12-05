@@ -226,5 +226,3 @@ def candidate_movesV2(player: int, state:GameState,G : dict) -> List[Move]:
         if endpoint is None:
             return []
         return [Move(from_node=endpoint, to_node=v) for v in G[endpoint] if v not in state.occupied]
-
-

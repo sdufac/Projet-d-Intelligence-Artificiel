@@ -119,3 +119,30 @@ def apply_move(state: GameState, player: int, move: Move) -> None:
     state.snakes[player].append(move.to_node)
     state.endpoints[player] = move.to_node
     state.occupied.add(move.to_node)
+
+def get_legal_moves(state: GameState, G: Dict[int, Set[int]], player: int) -> List[Move]:
+    """
+    Determines and returns a list of legal moves for the specified player.
+
+    :param state: (GameState) The current game state.
+    :param G: (Dict[int, Set[int]]) Adjacency dictionary representing the graph.
+    :param player: (int) ID of the current player, 0 or 1.
+    :return: (List[Move]) A list of legal moves available to the given player, adhering
+             to the game's legality constraints.
+    """
+    return [m for m in get_candidate_moves(state, G, player) if is_move_legal(state, player, m)]
+
+def get_candidate_moves(state: GameState, G: Dict[int, Set[int]], player: int) -> List[Move]:
+    """
+    Generate all candidate moves for the given player based on the current endpoint.
+
+    :param state: (GameState) The current game state.
+    :param G: (Dict[int, Set[int]]) Adjacency dictionary representing the graph.
+    :param player: (int) ID of the current player, 0 or 1.
+    :return: (List[Move]) A list of candidate moves, regardless of whether they are legal or not.
+    """
+    endpoint = state.endpoints[player]
+    if endpoint is None:
+        print("Warning: Player has no endpoint set.")
+        return []
+    return [Move(from_node=endpoint, to_node=v) for v in G[endpoint] if v not in state.occupied]

@@ -12,8 +12,8 @@ def parse_args():
     ap.add_argument("--n", type=int, default=30, help="Graph size (Erdos-Renyi)")
     ap.add_argument("--p", type=float, default=0.08, help="Edge probability (Erdos-Renyi)")
     ap.add_argument("--d", type=int, default=5, help="Dimension for hypercube")
-    ap.add_argument("--s0", type=str, default="greedy", help="Strategy for player 0")
-    ap.add_argument("--s1", type=str, default="greedy", help="Strategy for player 1")
+    ap.add_argument("--s0", type=str, default="random", help="Strategy for player 0")
+    ap.add_argument("--s1", type=str, default="random", help="Strategy for player 1")
     ap.add_argument("--seed", type=int, default=None, help="Random seed for start positions")
     ap.add_argument("--verbose", action="store_true", help="Print moves")
     ap.add_argument("--ui", action="store_true", help="Run using the graphical UI instead of strategies")
@@ -45,11 +45,6 @@ def run():
 
     game = Game(G, a, b)
     winner = game.play_game(s0, s1, verbose=args.verbose)
-
-    fname = "output.txt"
-    with open(fname, 'a') as f:
-        f.write(f"Winner :{winner}\n")
-
     print("Winner:", winner)
 
 if __name__ == '__main__':
