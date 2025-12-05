@@ -5,6 +5,7 @@ from typing import List, Optional
 from logic import GameState, Move, apply_move
 from utils import num_degree,freeNeighbor
 import random
+import sys
 from game import Game
 import copy
 from logic import _check_induced_path_property
@@ -70,21 +71,21 @@ class MinMaxStrategy(Strategy):
 
         move = None
         (value,move) = self.maxValue(state,player, depth)
+        print(f'Move retourné : {move}')
         return move
 
     def maxValue(self,state :GameState,player :int, depth: int) -> tuple[int,Move | None]:
         legal_move = get_legal_moves(state,state.G,player)
         if not legal_move: 
-            return (-10000,None)
-        elif depth < 0:
+            return (-sys.maxsize -1,None)
+        elif depth == 0:
             sommetPlayer = state.endpoints[player]
             assert sommetPlayer is not None
             return (freeNeighbor(state.G,sommetPlayer,state),None)
 
-        v = -999999
+        v = -inf
         move = None
-        actions = get_legal_moves(state,state.G,player)
-        for a in actions:
+        for a in legal_move:
             nextState = copy.deepcopy(state)
             apply_move(nextState,player,a)
             v2,a2 = self.minValue(nextState,1-player,depth - 1)
@@ -93,22 +94,18 @@ class MinMaxStrategy(Strategy):
                 move = a
         return (v,move)
 
-
-
     def minValue(self,state:GameState,player :int, depth:int)-> tuple[int,Move | None]:
         legal_move = get_legal_moves(state,state.G,player)
         if not legal_move: 
-            return (10000,None)
-        elif depth < 0:
+            return (sys.maxsize,None)
+        elif depth == 0:
             sommetPlayer = state.endpoints[1 - player]
             assert sommetPlayer is not None
             return (freeNeighbor(state.G,sommetPlayer,state),None)
-
         
-        v = 999999
+        v = inf
         move = None
-        actions = get_legal_moves(state,state.G,player)
-        for a in actions:
+        for a in legal_move:
             nextState = copy.deepcopy(state)
             apply_move(nextState,player,a)
             v2,a2 = self.maxValue(nextState,1-player,depth - 1)
@@ -117,10 +114,73 @@ class MinMaxStrategy(Strategy):
                 move = a
         return (v,move)
 
+class AlphaBetaStrategy(Strategy):
+
+    # def min_max_search(self, state: GameState,player : int)
+    def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
+        depth = 4
+
+        move = None
+        (value,move) = self.maxValue(state,player, depth,-inf,inf)
+        print(f'Move retourné : {move}')
+        return move
+
+    def maxValue(self,state :GameState,player :int, depth: int, α, β) -> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (-sys.maxsize -1,None)
+        elif depth == 0:
+            sommetPlayer = state.endpoints[player]
+            assert sommetPlayer is not None
+            return (freeNeighbor(state.G,sommetPlayer,state),None)
+
+        v = -inf
+        move = None
+        for a in legal_move:
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.minValue(nextState,1-player,depth - 1,α,β)
+            if v2 > v:
+                v = v2
+                move = a
+                if v > α:
+                    α = v
+            if v >= β:
+                return (v,move)
+
+        return (v,move)
+
+    def minValue(self,state:GameState,player :int, depth:int, α, β)-> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (sys.maxsize,None)
+        elif depth == 0:
+            sommetPlayer = state.endpoints[1 - player]
+            assert sommetPlayer is not None
+            return (freeNeighbor(state.G,sommetPlayer,state),None)
+        
+        v = inf
+        move = None
+        for a in legal_move:
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.maxValue(nextState,1-player,depth - 1,α,β)
+            if v2 < v:
+                v = v2
+                move = a
+
+                if v<β:
+                    β = v
+            if v <= α:
+                return (v,move)
+
+        return (v,move)
+
 # Registry of available strategies.
 # Add your new strategies here to run them from main.py.
 STRATEGIES = {
     "random": RandomStrategy,
     "greedy": GreedyMaxDegreeStrategy,
-    "minmax": MinMaxStrategy
+    "minmax": MinMaxStrategy,
+    "alphabeta": AlphaBetaStrategy
 }
