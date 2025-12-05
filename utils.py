@@ -173,24 +173,48 @@ def num_degree(G: dict, sommet:int) -> int:
 
     return count
 
-def freeNeighbor(G: (Dict[int, Set[int]]), sommet:int, state:GameState) -> int:
+def freeNeighbor(G: (Dict[int, Set[int]]),player, state:GameState) -> int:
     """
     Fonction créer par nous même qui compte le nombre de voisins libres d'un sommet
     """
-    count = 0
-    for voisin in G[sommet]:
+    player0 = state.endpoints[0]
+    player1 = state.endpoints[1]
+
+    p0count = 0
+    p1count = 0
+
+    for voisin in G[player0]:
         if voisin in state.occupied:
             continue
 
         flag = False
         for subVoisin in G[voisin]:
-            if subVoisin in state.occupied and subVoisin != sommet:
+            if subVoisin in state.occupied and subVoisin != player0:
                 flag = True
                 break
 
         if not flag:
-            count += 1
-    return count
+            p0count += 1
+
+    for voisin in G[player1]:
+        if voisin in state.occupied:
+            continue
+
+        flag = False
+        for subVoisin in G[voisin]:
+            if subVoisin in state.occupied and subVoisin != player1:
+                flag = True
+                break
+
+        if not flag:
+            p1count += 1
+
+    if player == 0:
+        return p0count - p1count
+    elif player == 1:
+        return p1count - p0count
+
+    return None
 
 # def ConstructTree(G : dict, state:GameState):
 #     """
