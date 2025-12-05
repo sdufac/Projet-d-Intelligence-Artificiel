@@ -1,4 +1,5 @@
 from logging import info
+from math import inf
 import math
 from time import process_time_ns
 from typing import List, Optional
@@ -12,7 +13,6 @@ from logic import _check_induced_path_property
 from typing import List, Optional, Dict, Set
 from logic import GameState, Move, get_legal_moves
 import random
-import sys
 
 # This file as well as utils.py should be the only ones you have to edit!
 
@@ -114,7 +114,68 @@ class MinMaxStrategy(Strategy):
                 v = v2
                 move = a
         return (v,move)
-    
+
+class AlphaBetaStrategy(Strategy):
+
+    # def min_max_search(self, state: GameState,player : int)
+    def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
+        depth = 4
+
+        move = None
+        (value,move) = self.maxValue(state,player, depth,-inf,inf)
+        print(f'Move retourné : {move}')
+        return move
+
+    def maxValue(self,state :GameState,player :int, depth: int, α, β) -> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (-sys.maxsize -1,None)
+        elif depth == 0:
+            sommetPlayer = state.endpoints[player]
+            assert sommetPlayer is not None
+            return (freeNeighbor(state.G,sommetPlayer,state),None)
+
+        v = -inf
+        move = None
+        for a in legal_move:
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.minValue(nextState,1-player,depth - 1,α,β)
+            if v2 > v:
+                v = v2
+                move = a
+                if v > α:
+                    α = v
+            if v >= β:
+                return (v,move)
+
+        return (v,move)
+
+    def minValue(self,state:GameState,player :int, depth:int, α, β)-> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (sys.maxsize,None)
+        elif depth == 0:
+            sommetPlayer = state.endpoints[1 - player]
+            assert sommetPlayer is not None
+            return (freeNeighbor(state.G,sommetPlayer,state),None)
+        
+        v = inf
+        move = None
+        for a in legal_move:
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.maxValue(nextState,1-player,depth - 1,α,β)
+            if v2 < v:
+                v = v2
+                move = a
+
+                if v<β:
+                    β = v
+            if v <= α:
+                return (v,move)
+
+        return (v,move)
 
 class MCTSNode:
     def __init__(self, state: GameState, parent=None, move= None, player_to_move=0):
@@ -131,8 +192,6 @@ class MonteCarloTreeSearchStrategy(Strategy):
         '''
         Réalisation avec l'aide de Gemini
         '''
-
-
         def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
             iter = 1000
             start = MCTSNode(state=state, parent=None, move=None, player_to_move=player)
@@ -140,7 +199,7 @@ class MonteCarloTreeSearchStrategy(Strategy):
             if not start.untried_moves:
                 return None
             
-            for i in range(iter):
+            for _ in range(iter):
                 node = self.selection(start, player)
                 node = self.expansion(node, player)
                 winner = self.simulation(node.state, node.player_to_move)
@@ -223,5 +282,6 @@ STRATEGIES = {
     "random": RandomStrategy,
     "greedy": GreedyMaxDegreeStrategy,
     "minmax": MinMaxStrategy,
-    "mcts": MonteCarloTreeSearchStrategy
+    "mcts": MonteCarloTreeSearchStrategy,
+    "alphabeta": AlphaBetaStrategy
 }

@@ -1,2 +1,0 @@
-est-ce qu'on a bien fais le minmax
-est-ce qu'on a bien fait de reimplémenté les deux fonctions de games 
