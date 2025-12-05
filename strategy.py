@@ -81,7 +81,7 @@ class MinMaxStrategy(Strategy):
         elif depth == 0:
             sommetPlayer = state.endpoints[player]
             assert sommetPlayer is not None
-            return (freeNeighbor(state.G,sommetPlayer,state),None)
+            return (freeNeighbor(state.G,player,state),None)
 
         v = -inf
         move = None
@@ -101,7 +101,7 @@ class MinMaxStrategy(Strategy):
         elif depth == 0:
             sommetPlayer = state.endpoints[1 - player]
             assert sommetPlayer is not None
-            return (freeNeighbor(state.G,sommetPlayer,state),None)
+            return (freeNeighbor(state.G,1 - player,state),None)
         
         v = inf
         move = None
@@ -132,7 +132,7 @@ class AlphaBetaStrategy(Strategy):
         elif depth == 0:
             sommetPlayer = state.endpoints[player]
             assert sommetPlayer is not None
-            return (freeNeighbor(state.G,sommetPlayer,state),None)
+            return (freeNeighbor(state.G,player,state),None)
 
         v = -inf
         move = None
@@ -157,7 +157,7 @@ class AlphaBetaStrategy(Strategy):
         elif depth == 0:
             sommetPlayer = state.endpoints[1 - player]
             assert sommetPlayer is not None
-            return (freeNeighbor(state.G,sommetPlayer,state),None)
+            return (freeNeighbor(state.G,1 - player,state),None)
         
         v = inf
         move = None
