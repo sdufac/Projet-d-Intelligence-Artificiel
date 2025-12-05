@@ -173,15 +173,23 @@ def num_degree(G: dict, sommet:int) -> int:
 
     return count
 
-def freeNeighbor(G: dict[int,list[int]], sommet:int, state:GameState) -> int:
+def freeNeighbor(G: (Dict[int, Set[int]]), sommet:int, state:GameState) -> int:
     """
     Fonction créer par nous même qui compte le nombre de voisins libres d'un sommet
     """
     count = 0
     for voisin in G[sommet]:
-        if voisin not in state.occupied:
-            count +=1
+        if voisin in state.occupied:
+            continue
 
+        flag = False
+        for subVoisin in G[voisin]:
+            if subVoisin in state.occupied and subVoisin != sommet:
+                flag = True
+                break
+
+        if not flag:
+            count += 1
     return count
 
 # def ConstructTree(G : dict, state:GameState):
@@ -208,21 +216,3 @@ def freeNeighbor(G: dict[int,list[int]], sommet:int, state:GameState) -> int:
 #             currentNode.children.append(newNode.id)
 #             file.append(newNode)
 #     return graph
-
-
-
-def legal_movesv2(player: int, state:GameState, G : dict) -> List[Move]:
-        """
-        
-        """
-        return [m for m in candidate_movesV2(player,state,G) if is_move_legal(state, player, m)]
-
-
-def candidate_movesV2(player: int, state:GameState,G : dict) -> List[Move]:
-        """
-        
-        """
-        endpoint = state.endpoints[player]
-        if endpoint is None:
-            return []
-        return [Move(from_node=endpoint, to_node=v) for v in G[endpoint] if v not in state.occupied]

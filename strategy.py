@@ -1,7 +1,8 @@
 from logging import info
 from math import inf
+from time import process_time_ns
 from typing import List, Optional
-from logic import GameState, Move
+from logic import GameState, Move, apply_move
 from utils import num_degree,freeNeighbor
 import random
 from game import Game
@@ -63,51 +64,58 @@ class GreedyMaxDegreeStrategy(Strategy):
 
 class MinMaxStrategy(Strategy):
     # def min_max_search(self, state: GameState,player : int)
+    def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
+        profondeurMax = 4
 
-    def __init__(self,game:Game,playerToMax:int):
-        super().__init__()
-        self.game: Game = copy.deepcopy(game)
-        self.playerMax = playerToMax
-        self.playerMin = 1 - playerToMax
-
-    def select_move(self, state : GameState,player:int, legal_moves : list[Move]) -> Move:
-        # TODO
-        (value,move) = self.maxValue(self.game,state,0)
-        assert move is not None
+        move = None
+        (value,move) = self.maxValue(state,player,profondeurMax, 0)
         return move
 
-    def maxValue(self,game :Game,state :GameState,player :int) -> tuple[int,Move | None]:
-        if not _check_induced_path_property(state.occupied,state.G): 
+    def maxValue(self,state :GameState,player :int,profondeurMax:int, profondeur: int) -> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (-10000,None)
+        elif profondeur > profondeurMax:
+            sommetPlayer = state.endpoints[player]
+            assert sommetPlayer is not None
+            return (freeNeighbor(state.G,sommetPlayer,state),None)
+
+        
+        profondeur +=1
+        
+        v = -999999
+        move = None
+        actions = get_legal_moves(state,state.G,player)
+        for a in actions:
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.minValue(nextState,1-player,profondeurMax,profondeur)
+            if v2 > v:
+                v = v2
+                move = a
+        return (v,move)
+
+
+
+    def minValue(self,state:GameState,player :int,profondeurMax:int, profondeur:int)-> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (10000,None)
+        elif profondeur > profondeurMax:
             sommetPlayer = state.endpoints[player]
             assert sommetPlayer is not None
             return (freeNeighbor(state.G,sommetPlayer,state),None)
         
         v = 999999
         move = None
-        actions = game.legal_moves(player)
+        actions = get_legal_moves(state,state.G,player)
         for a in actions:
-            v2,a2 = self.minValue(game,state,1-player)
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.maxValue(nextState,1-player,profondeurMax,profondeur)
             if v2 < v:
                 v = v2
-                move = a2
-        return (v,move)
-
-
-
-    def minValue(self,game:Game,state:GameState,player :int)-> tuple[int,Move | None]:
-        if not _check_induced_path_property(state.occupied,state.G): 
-            sommetPlayer = state.endpoints[player]
-            assert sommetPlayer is not None
-            return (freeNeighbor(state.G,sommetPlayer,state),None)
-        
-        v = -999999
-        move = None
-        actions = game.legal_moves(player)
-        for a in actions:
-            v2,a2 = self.maxValue(game,state,1 - player)
-            if v2 > v:
-                v = v2
-                move = a2
+                move = a
         return (v,move)
 
 # Registry of available strategies.
