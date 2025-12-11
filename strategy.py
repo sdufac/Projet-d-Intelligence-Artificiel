@@ -4,7 +4,7 @@ import math
 from time import process_time_ns
 from typing import List, Optional
 from logic import GameState, Move, apply_move
-from utils import num_degree,freeNeighbor
+from utils import num_degree,freeNeighbor,BFS
 import random
 import sys
 from game import Game
@@ -115,15 +115,73 @@ class MinMaxStrategy(Strategy):
                 move = a
         return (v,move)
 
-class AlphaBetaStrategy(Strategy):
-
+class AlphaBetaStrategyDFS(Strategy):
     # def min_max_search(self, state: GameState,player : int)
     def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
         depth = 4
 
         move = None
         (value,move) = self.maxValue(state,player, depth,-inf,inf)
-        print(f'Move retourné : {move}')
+        return move
+
+    def maxValue(self,state :GameState,player :int, depth: int, α, β) -> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (-sys.maxsize -1,None)
+        elif depth == 0:
+            sommetPlayer = state.endpoints[player]
+            assert sommetPlayer is not None
+            return (BFS(state.G,player,state),None)
+
+        v = -inf
+        move = None
+        for a in legal_move:
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.minValue(nextState,1-player,depth - 1,α,β)
+            if v2 > v:
+                v = v2
+                move = a
+                if v > α:
+                    α = v
+            if v >= β:
+                return (v,move)
+
+        return (v,move)
+
+    def minValue(self,state:GameState,player :int, depth:int, α, β)-> tuple[int,Move | None]:
+        legal_move = get_legal_moves(state,state.G,player)
+        if not legal_move: 
+            return (sys.maxsize,None)
+        elif depth == 0:
+            sommetPlayer = state.endpoints[1 - player]
+            assert sommetPlayer is not None
+            return (BFS(state.G,1 - player,state),None)
+        
+        v = inf
+        move = None
+        for a in legal_move:
+            nextState = copy.deepcopy(state)
+            apply_move(nextState,player,a)
+            v2,a2 = self.maxValue(nextState,1-player,depth - 1,α,β)
+            if v2 < v:
+                v = v2
+                move = a
+
+                if v<β:
+                    β = v
+            if v <= α:
+                return (v,move)
+
+        return (v,move)
+
+class AlphaBetaStrategyFN(Strategy):
+    # def min_max_search(self, state: GameState,player : int)
+    def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
+        depth = 4
+
+        move = None
+        (value,move) = self.maxValue(state,player, depth,-inf,inf)
         return move
 
     def maxValue(self,state :GameState,player :int, depth: int, α, β) -> tuple[int,Move | None]:
@@ -283,5 +341,6 @@ STRATEGIES = {
     "greedy": GreedyMaxDegreeStrategy,
     "minmax": MinMaxStrategy,
     "mcts": MonteCarloTreeSearchStrategy,
-    "alphabeta": AlphaBetaStrategy
+    "alphabetafn": AlphaBetaStrategyFN,
+    "alphabetadfs": AlphaBetaStrategyDFS
 }

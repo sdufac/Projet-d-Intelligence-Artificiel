@@ -215,3 +215,34 @@ def freeNeighbor(G: (Dict[int, Set[int]]),player, state:GameState) -> int:
         return p1count - p0count
 
     return None
+
+def BFS(G: (Dict[int, Set[int]]),player, state:GameState) -> int:
+    explored = set()
+    explored.update(state.occupied)
+    player0 = state.endpoints[0]
+    player1 = state.endpoints[1]
+
+    count0 = 0
+    count1 = 0
+
+    Q0 = deque([player0])
+    Q1 = deque([player1])
+
+    while Q0 or Q1:
+        if Q0:
+            v0 = Q0.pop()
+            for voisin in G[v0]:
+                if voisin not in explored:
+                    count0 += 1
+                    explored.add(voisin)
+                    Q0.appendleft(voisin)
+
+        if Q1:
+            v1 = Q1.pop()
+            for voisin in G[v1]:
+                if voisin not in explored:
+                    count1 += 1
+                    explored.add(voisin)
+                    Q1.appendleft(voisin)
+
+    return count0 - count1
