@@ -118,7 +118,7 @@ class MinMaxStrategy(Strategy):
 class AlphaBetaStrategyDFS(Strategy):
     # def min_max_search(self, state: GameState,player : int)
     def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
-        depth = 4
+        depth = 3
 
         move = None
         (value,move) = self.maxValue(state,player, depth,-inf,inf)
@@ -178,7 +178,7 @@ class AlphaBetaStrategyDFS(Strategy):
 class AlphaBetaStrategyFN(Strategy):
     # def min_max_search(self, state: GameState,player : int)
     def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
-        depth = 4
+        depth = 3
 
         move = None
         (value,move) = self.maxValue(state,player, depth,-inf,inf)
@@ -246,6 +246,7 @@ class MCTSNode:
         self.visits = 0
 
         self.untried_moves = get_legal_moves(state, state.G, player_to_move)
+
 class MonteCarloTreeSearchStrategy(Strategy):
         '''
         Réalisation avec l'aide de Gemini

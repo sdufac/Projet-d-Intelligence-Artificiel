@@ -1,4 +1,5 @@
 import os
+import time
 
 '''
 autoclomplétion avec copilot
@@ -21,7 +22,11 @@ bashCommand = (
 
 for i in range(1, int(nombreParties) + 1):
 
+    start_time = time.time()
     os.system(f'bash -lc "{bashCommand}"')
+    end_time= time.time()
+    duree = end_time - start_time
+    print("Temps écoulé ",duree)
 
 compteurWinner0 = 0
 compteurWinner1 = 0
