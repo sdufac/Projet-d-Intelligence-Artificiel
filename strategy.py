@@ -1,10 +1,11 @@
 from logging import info
 from math import inf
 import math
+import time
 from time import process_time_ns
 from typing import List, Optional
 from logic import GameState, Move, apply_move
-from utils import num_degree,freeNeighbor,BFS
+from utils import num_degree,freeNeighbor,BFS,utilMove
 import random
 import sys
 from game import Game
@@ -120,12 +121,20 @@ class AlphaBetaStrategyDFS(Strategy):
     def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
         depth = 3
 
+        start_time = time.time()
         move = None
-        (value,move) = self.maxValue(state,player, depth,-inf,inf)
+        (value,move) = self.maxValue(state,player, depth,-inf,inf,G)
+
+        end_time = time.time()
+        duree = end_time - start_time
+        print("Durée du tour: ",duree)
         return move
 
-    def maxValue(self,state :GameState,player :int, depth: int, α, β) -> tuple[int,Move | None]:
+    def maxValue(self,state :GameState,player :int, depth: int, α, β,G) -> tuple[int,Move | None]:
         legal_move = get_legal_moves(state,state.G,player)
+        # Trie des moves en fonction du nombre de voisin pour tenter de trier du meilleur au pire coup pour avoir plus de chance d'élaguer
+        legal_move.sort(key = lambda m: utilMove(m,state,G))
+
         if not legal_move: 
             return (-sys.maxsize -1,None)
         elif depth == 0:
@@ -138,7 +147,7 @@ class AlphaBetaStrategyDFS(Strategy):
         for a in legal_move:
             nextState = copy.deepcopy(state)
             apply_move(nextState,player,a)
-            v2,a2 = self.minValue(nextState,1-player,depth - 1,α,β)
+            v2,a2 = self.minValue(nextState,1-player,depth - 1,α,β,G)
             if v2 > v:
                 v = v2
                 move = a
@@ -149,8 +158,11 @@ class AlphaBetaStrategyDFS(Strategy):
 
         return (v,move)
 
-    def minValue(self,state:GameState,player :int, depth:int, α, β)-> tuple[int,Move | None]:
+    def minValue(self,state:GameState,player :int, depth:int, α, β,G)-> tuple[int,Move | None]:
         legal_move = get_legal_moves(state,state.G,player)
+        # Trie des moves en fonction du nombre de voisin pour tenter de trier du meilleur au pire coup pour avoir plus de chance d'élaguer
+        legal_move.sort(key = lambda m: utilMove(m,state,G))
+
         if not legal_move: 
             return (sys.maxsize,None)
         elif depth == 0:
@@ -163,7 +175,7 @@ class AlphaBetaStrategyDFS(Strategy):
         for a in legal_move:
             nextState = copy.deepcopy(state)
             apply_move(nextState,player,a)
-            v2,a2 = self.maxValue(nextState,1-player,depth - 1,α,β)
+            v2,a2 = self.maxValue(nextState,1-player,depth - 1,α,β,G)
             if v2 < v:
                 v = v2
                 move = a
@@ -180,8 +192,13 @@ class AlphaBetaStrategyFN(Strategy):
     def select_move(self, state: GameState, G: Dict[int, Set[int]], player: int) -> Optional[Move]:
         depth = 3
 
+        start_time = time.time()
         move = None
         (value,move) = self.maxValue(state,player, depth,-inf,inf)
+
+        end_time = time.time()
+        duree = end_time - start_time
+        print("Durée du tour: ",duree)
         return move
 
     def maxValue(self,state :GameState,player :int, depth: int, α, β) -> tuple[int,Move | None]:

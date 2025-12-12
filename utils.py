@@ -216,6 +216,7 @@ def freeNeighbor(G: (Dict[int, Set[int]]),player, state:GameState) -> int:
 
     return None
 
+# Surface théorique atteignable avant le joueur adverse (Flood)
 def BFS(G: (Dict[int, Set[int]]),player, state:GameState) -> int:
     explored = set()
     explored.update(state.occupied)
@@ -246,3 +247,12 @@ def BFS(G: (Dict[int, Set[int]]),player, state:GameState) -> int:
                     Q1.appendleft(voisin)
 
     return count0 - count1
+
+def utilMove(move: Move, state: GameState,G: (Dict[int, Set[int]])):
+    voisins = G[move.to_node]
+    count = 0
+    for voisin in voisins:
+        if voisin not in state.occupied:
+            count +=1
+
+    return count
