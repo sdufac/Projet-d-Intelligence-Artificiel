@@ -10,6 +10,7 @@ venv/
 # Dossier d'environnement Conda (si vous l'utilisez)
 .conda/
 
+
 # Fichiers de configuration spécifiques à l'utilisateur
 # ----------------------------------------------------
 *.pyc
@@ -34,3 +35,19 @@ build/
 
 # Fichiers de sortie à ignorer
 output.txt
+# --- LaTeX ---
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
+*.out
+*.bbl
+*.blg
+*.lof
+*.lot
+
+# Optionnel : Si tu ne veux pas versionner le PDF généré (recommandé)
+# Si tu veux garder le PDF sur git, enlève la ligne ci-dessous
+*.pdf
